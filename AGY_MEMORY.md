@@ -1,5 +1,13 @@
 # AGY_MEMORY: AI System Design Interview Simulator
 
+> [!IMPORTANT]
+> **HIGHEST PRIORITY OPERATIONAL DIRECTIVE (Core Objective):**
+> 1. Proceed methodically and steadily, step by step.
+> 2. Make a HIGH volume of granular, atomic git commits for every individual task or sub-step.
+> 3. Never batch multiple tasks into a single commit; each task MUST have its own dedicated descriptive commit.
+> 4. Keep the GitHub contribution activity consistently active and green.
+> 5. Update AGY_MEMORY.md checklist and status tracker with each task completion.
+
 ## 1. Project Architecture Roadmap
 
 ### 1.1 System Overview
