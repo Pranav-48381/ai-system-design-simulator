@@ -1,0 +1,70 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: system_design_interviewer_api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - APP_ENV=development
+      - DEBUG=true
+      - POSTGRES_SERVER=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=system_design_interview
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@postgres:5432/system_design_interview
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - interviewer_net
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: system_design_interviewer_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: system_design_interview
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d system_design_interview"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - interviewer_net
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: system_design_interviewer_pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    networks:
+      - interviewer_net
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  interviewer_net:
+    driver: bridge
