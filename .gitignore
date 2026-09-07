@@ -86,6 +86,17 @@ dmypy.json
 ehthumbs.db
 Thumbs.db
 
-# Antigravity CLI / AI agent artifacts
+# Antigravity CLI / AI agent artifacts & local learning logs
 scratch/
 .gemini/
+.agents/
+.agent/
+_agents/
+_agent/
+learning/
+AGY_MEMORY.md
+*.agent.md
+agent.md
+AGENTS.md
+GEMINI.md
+Manware-s-AI-Learning-Toolkit/
