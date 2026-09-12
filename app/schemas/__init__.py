@@ -43,6 +43,16 @@ from app.schemas.problem import (
     ProblemUpdate,
     TagRead,
 )
+from app.schemas.rubric import (
+    RubricBase,
+    RubricCreate,
+    RubricCriterionBase,
+    RubricCriterionCreate,
+    RubricCriterionSchema,
+    RubricRead,
+    RubricUpdate,
+    RubricWithCriteriaRead,
+)
 from app.schemas.user import (
     UserBase,
     UserCreate,
@@ -72,6 +82,15 @@ __all__ = [
     "ProblemSummary",
     "ProblemUpdate",
     "TagRead",
+    # Rubric
+    "RubricBase",
+    "RubricCreate",
+    "RubricCriterionBase",
+    "RubricCriterionCreate",
+    "RubricCriterionSchema",
+    "RubricRead",
+    "RubricUpdate",
+    "RubricWithCriteriaRead",
     # User
     "UserBase",
     "UserCreate",
