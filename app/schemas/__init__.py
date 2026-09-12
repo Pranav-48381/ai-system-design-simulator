@@ -33,6 +33,16 @@ from app.schemas.common import (
     PaginationMeta,
     PaginationParams,
 )
+from app.schemas.problem import (
+    ProblemBase,
+    ProblemCreate,
+    ProblemDetail,
+    ProblemFilterParams,
+    ProblemRead,
+    ProblemSummary,
+    ProblemUpdate,
+    TagRead,
+)
 from app.schemas.user import (
     UserBase,
     UserCreate,
@@ -53,6 +63,15 @@ __all__ = [
     "PaginatedResponse",
     "PaginationMeta",
     "PaginationParams",
+    # Problem
+    "ProblemBase",
+    "ProblemCreate",
+    "ProblemDetail",
+    "ProblemFilterParams",
+    "ProblemRead",
+    "ProblemSummary",
+    "ProblemUpdate",
+    "TagRead",
     # User
     "UserBase",
     "UserCreate",
