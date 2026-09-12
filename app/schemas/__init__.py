@@ -24,6 +24,23 @@ class BaseSchema(BaseModel):
     )
 
 
+from app.schemas.common import (
+    ApiResponse,
+    ErrorDetail,
+    ErrorResponse,
+    HealthResponse,
+    PaginatedResponse,
+    PaginationMeta,
+    PaginationParams,
+)
+
 __all__ = [
+    "ApiResponse",
     "BaseSchema",
+    "ErrorDetail",
+    "ErrorResponse",
+    "HealthResponse",
+    "PaginatedResponse",
+    "PaginationMeta",
+    "PaginationParams",
 ]
