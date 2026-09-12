@@ -53,6 +53,14 @@ from app.schemas.rubric import (
     RubricUpdate,
     RubricWithCriteriaRead,
 )
+from app.schemas.message import (
+    CandidateTurnInput,
+    MessageBase,
+    MessageCreate,
+    MessageFilterParams,
+    MessageHistory,
+    MessageRead,
+)
 from app.schemas.session import (
     SessionBase,
     SessionCreate,
@@ -82,6 +90,13 @@ __all__ = [
     "PaginatedResponse",
     "PaginationMeta",
     "PaginationParams",
+    # Message
+    "CandidateTurnInput",
+    "MessageBase",
+    "MessageCreate",
+    "MessageFilterParams",
+    "MessageHistory",
+    "MessageRead",
     # Problem
     "ProblemBase",
     "ProblemCreate",
