@@ -53,6 +53,15 @@ from app.schemas.rubric import (
     RubricUpdate,
     RubricWithCriteriaRead,
 )
+from app.schemas.session import (
+    SessionBase,
+    SessionCreate,
+    SessionDetailRead,
+    SessionRead,
+    SessionStageTransition,
+    SessionStatusUpdate,
+    SessionSummary,
+)
 from app.schemas.user import (
     UserBase,
     UserCreate,
@@ -91,6 +100,14 @@ __all__ = [
     "RubricRead",
     "RubricUpdate",
     "RubricWithCriteriaRead",
+    # Session
+    "SessionBase",
+    "SessionCreate",
+    "SessionDetailRead",
+    "SessionRead",
+    "SessionStageTransition",
+    "SessionStatusUpdate",
+    "SessionSummary",
     # User
     "UserBase",
     "UserCreate",
