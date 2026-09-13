@@ -42,6 +42,15 @@ from app.schemas.common import (
     PaginationMeta,
     PaginationParams,
 )
+from app.schemas.evaluation import (
+    CompetencyScoreSchema,
+    EvaluationBase,
+    EvaluationCreate,
+    EvaluationDetailRead,
+    EvaluationRead,
+    EvaluationUpdate,
+    HiringRecommendationEnum,
+)
 from app.schemas.problem import (
     ProblemBase,
     ProblemCreate,
@@ -117,6 +126,14 @@ __all__ = [
     "PaginatedResponse",
     "PaginationMeta",
     "PaginationParams",
+    # Evaluation
+    "CompetencyScoreSchema",
+    "EvaluationBase",
+    "EvaluationCreate",
+    "EvaluationDetailRead",
+    "EvaluationRead",
+    "EvaluationUpdate",
+    "HiringRecommendationEnum",
     # Message
     "CandidateTurnInput",
     "MessageBase",
