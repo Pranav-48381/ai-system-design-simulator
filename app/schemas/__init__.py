@@ -116,6 +116,24 @@ from app.schemas.user import (
     UserTokenResponse,
     UserUpdate,
 )
+from app.schemas.websocket import (
+    WSCandidateMessagePayload,
+    WSCanvasUpdatePayload,
+    WSErrorPayload,
+    WSEvaluationReadyPayload,
+    WSHintDeliveredPayload,
+    WSInboundMessage,
+    WSInterviewerMessageEndPayload,
+    WSInterviewerTokenPayload,
+    WSOutboundMessage,
+    WSPingPayload,
+    WSPongPayload,
+    WSRequestHintPayload,
+    WSStageTransitionPayload,
+    WSSubmitStagePayload,
+    WebSocketInboundEvent,
+    WebSocketOutboundEvent,
+)
 
 __all__ = [
     # Artifact
@@ -201,4 +219,21 @@ __all__ = [
     "UserSummary",
     "UserTokenResponse",
     "UserUpdate",
+    # WebSocket
+    "WSCandidateMessagePayload",
+    "WSCanvasUpdatePayload",
+    "WSErrorPayload",
+    "WSEvaluationReadyPayload",
+    "WSHintDeliveredPayload",
+    "WSInboundMessage",
+    "WSInterviewerMessageEndPayload",
+    "WSInterviewerTokenPayload",
+    "WSOutboundMessage",
+    "WSPingPayload",
+    "WSPongPayload",
+    "WSRequestHintPayload",
+    "WSStageTransitionPayload",
+    "WSSubmitStagePayload",
+    "WebSocketInboundEvent",
+    "WebSocketOutboundEvent",
 ]
