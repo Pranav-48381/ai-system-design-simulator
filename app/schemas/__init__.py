@@ -51,6 +51,15 @@ from app.schemas.evaluation import (
     EvaluationUpdate,
     HiringRecommendationEnum,
 )
+from app.schemas.feedback import (
+    FeedbackCategoryEnum,
+    FeedbackItemBase,
+    FeedbackItemCreate,
+    FeedbackItemRead,
+    FeedbackReportRead,
+    ImprovementTipSchema,
+    LearningResourceSchema,
+)
 from app.schemas.problem import (
     ProblemBase,
     ProblemCreate,
@@ -134,6 +143,14 @@ __all__ = [
     "EvaluationRead",
     "EvaluationUpdate",
     "HiringRecommendationEnum",
+    # Feedback
+    "FeedbackCategoryEnum",
+    "FeedbackItemBase",
+    "FeedbackItemCreate",
+    "FeedbackItemRead",
+    "FeedbackReportRead",
+    "ImprovementTipSchema",
+    "LearningResourceSchema",
     # Message
     "CandidateTurnInput",
     "MessageBase",
