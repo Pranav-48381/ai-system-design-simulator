@@ -107,6 +107,13 @@ from app.schemas.stage import (
     StageTransitionRequest,
     StageTransitionResponse,
 )
+from app.schemas.stream import (
+    StreamEndEvent,
+    StreamEventTypeEnum,
+    StreamMetricsEvent,
+    StreamStartEvent,
+    TokenStreamChunk,
+)
 from app.schemas.user import (
     UserBase,
     UserCreate,
@@ -211,6 +218,12 @@ __all__ = [
     "StageStatusUpdate",
     "StageTransitionRequest",
     "StageTransitionResponse",
+    # Stream
+    "StreamEndEvent",
+    "StreamEventTypeEnum",
+    "StreamMetricsEvent",
+    "StreamStartEvent",
+    "TokenStreamChunk",
     # User
     "UserBase",
     "UserCreate",
