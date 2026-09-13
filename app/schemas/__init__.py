@@ -24,6 +24,15 @@ class BaseSchema(BaseModel):
     )
 
 
+from app.schemas.artifact import (
+    ArtifactBase,
+    ArtifactCreate,
+    ArtifactListRead,
+    ArtifactRead,
+    ArtifactSummary,
+    ArtifactTypeEnum,
+    ArtifactUpdate,
+)
 from app.schemas.common import (
     ApiResponse,
     ErrorDetail,
@@ -91,6 +100,14 @@ from app.schemas.user import (
 )
 
 __all__ = [
+    # Artifact
+    "ArtifactBase",
+    "ArtifactCreate",
+    "ArtifactListRead",
+    "ArtifactRead",
+    "ArtifactSummary",
+    "ArtifactTypeEnum",
+    "ArtifactUpdate",
     # Common
     "ApiResponse",
     "BaseSchema",
