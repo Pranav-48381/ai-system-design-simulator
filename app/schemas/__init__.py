@@ -33,6 +33,14 @@ from app.schemas.artifact import (
     ArtifactTypeEnum,
     ArtifactUpdate,
 )
+from app.schemas.canvas import (
+    DiagramEdgeSchema,
+    DiagramEdgeTypeEnum,
+    DiagramNodeSchema,
+    DiagramNodeTypeEnum,
+    WhiteboardCanvasState,
+    WhiteboardSyncEvent,
+)
 from app.schemas.common import (
     ApiResponse,
     ErrorDetail,
@@ -151,6 +159,13 @@ __all__ = [
     "ArtifactSummary",
     "ArtifactTypeEnum",
     "ArtifactUpdate",
+    # Canvas
+    "DiagramEdgeSchema",
+    "DiagramEdgeTypeEnum",
+    "DiagramNodeSchema",
+    "DiagramNodeTypeEnum",
+    "WhiteboardCanvasState",
+    "WhiteboardSyncEvent",
     # Common
     "ApiResponse",
     "BaseSchema",
