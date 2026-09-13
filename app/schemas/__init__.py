@@ -70,6 +70,16 @@ from app.schemas.session import (
     SessionStatusUpdate,
     SessionSummary,
 )
+from app.schemas.stage import (
+    StageProgressBase,
+    StageProgressCreate,
+    StageProgressRead,
+    StageStatusEnum,
+    StageStatusRead,
+    StageStatusUpdate,
+    StageTransitionRequest,
+    StageTransitionResponse,
+)
 from app.schemas.user import (
     UserBase,
     UserCreate,
@@ -123,6 +133,15 @@ __all__ = [
     "SessionStageTransition",
     "SessionStatusUpdate",
     "SessionSummary",
+    # Stage
+    "StageProgressBase",
+    "StageProgressCreate",
+    "StageProgressRead",
+    "StageStatusEnum",
+    "StageStatusRead",
+    "StageStatusUpdate",
+    "StageTransitionRequest",
+    "StageTransitionResponse",
     # User
     "UserBase",
     "UserCreate",
