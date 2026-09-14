@@ -100,6 +100,13 @@ from app.schemas.feedback import (
     ImprovementTipSchema,
     LearningResourceSchema,
 )
+from app.schemas.interview_report import (
+    ArtifactsExecutionSummarySchema,
+    ComprehensiveInterviewReportDTO,
+    InterviewReportExportFormatEnum,
+    InterviewReportExportRequest,
+    InterviewStageExecutionSummarySchema,
+)
 from app.schemas.problem import (
     ProblemBase,
     ProblemCreate,
@@ -252,6 +259,12 @@ __all__ = [
     "FeedbackReportRead",
     "ImprovementTipSchema",
     "LearningResourceSchema",
+    # Interview Report
+    "ArtifactsExecutionSummarySchema",
+    "ComprehensiveInterviewReportDTO",
+    "InterviewReportExportFormatEnum",
+    "InterviewReportExportRequest",
+    "InterviewStageExecutionSummarySchema",
     # Message
     "CandidateTurnInput",
     "MessageBase",
