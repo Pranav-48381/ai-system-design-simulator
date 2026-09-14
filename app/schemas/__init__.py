@@ -107,6 +107,14 @@ from app.schemas.interview_report import (
     InterviewReportExportRequest,
     InterviewStageExecutionSummarySchema,
 )
+from app.schemas.persona import (
+    InterviewerPersonaConfigSchema,
+    InterviewerPersonaListRead,
+    InterviewerPersonaPreferenceUpdate,
+    InterviewerPersonaTraitsSchema,
+    PacingBiasEnum,
+    QuestioningStyleEnum,
+)
 from app.schemas.problem import (
     ProblemBase,
     ProblemCreate,
@@ -272,6 +280,13 @@ __all__ = [
     "MessageFilterParams",
     "MessageHistory",
     "MessageRead",
+    # Persona
+    "InterviewerPersonaConfigSchema",
+    "InterviewerPersonaListRead",
+    "InterviewerPersonaPreferenceUpdate",
+    "InterviewerPersonaTraitsSchema",
+    "PacingBiasEnum",
+    "QuestioningStyleEnum",
     # Problem
     "ProblemBase",
     "ProblemCreate",
