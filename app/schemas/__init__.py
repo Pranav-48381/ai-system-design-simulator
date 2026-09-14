@@ -61,6 +61,18 @@ from app.schemas.common import (
     PaginationMeta,
     PaginationParams,
 )
+from app.schemas.data_model_design import (
+    ColumnSchemaDesign,
+    DatabaseParadigmEnum,
+    DataModelDesignSubmissionSchema,
+    IndexSchemaDesign,
+    IndexTypeEnum,
+    OnDeleteActionEnum,
+    PartitioningStrategySchema,
+    RelationSchema,
+    RelationTypeEnum,
+    TableSchemaDesign,
+)
 from app.schemas.estimation import (
     EstimationAssumptionSchema,
     EstimationCalculationSchema,
@@ -205,6 +217,17 @@ __all__ = [
     "PaginatedResponse",
     "PaginationMeta",
     "PaginationParams",
+    # Data Model Design
+    "ColumnSchemaDesign",
+    "DatabaseParadigmEnum",
+    "DataModelDesignSubmissionSchema",
+    "IndexSchemaDesign",
+    "IndexTypeEnum",
+    "OnDeleteActionEnum",
+    "PartitioningStrategySchema",
+    "RelationSchema",
+    "RelationTypeEnum",
+    "TableSchemaDesign",
     # Estimation
     "EstimationAssumptionSchema",
     "EstimationCalculationSchema",
