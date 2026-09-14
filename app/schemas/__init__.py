@@ -24,6 +24,17 @@ class BaseSchema(BaseModel):
     )
 
 
+from app.schemas.api_design import (
+    ApiDesignSubmissionSchema,
+    ApiResponseDesignSchema,
+    AuthTypeEnum,
+    EndpointDesignSchema,
+    HttpMethodEnum,
+    ParameterLocationEnum,
+    ParameterSchema,
+    ProtocolTypeEnum,
+    RateLimitDesignSchema,
+)
 from app.schemas.artifact import (
     ArtifactBase,
     ArtifactCreate,
@@ -160,6 +171,16 @@ from app.schemas.websocket import (
 )
 
 __all__ = [
+    # API Design
+    "ApiDesignSubmissionSchema",
+    "ApiResponseDesignSchema",
+    "AuthTypeEnum",
+    "EndpointDesignSchema",
+    "HttpMethodEnum",
+    "ParameterLocationEnum",
+    "ParameterSchema",
+    "ProtocolTypeEnum",
+    "RateLimitDesignSchema",
     # Artifact
     "ArtifactBase",
     "ArtifactCreate",
