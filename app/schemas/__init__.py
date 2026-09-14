@@ -100,6 +100,15 @@ from app.schemas.feedback import (
     ImprovementTipSchema,
     LearningResourceSchema,
 )
+from app.schemas.health import (
+    ComponentHealthSchema,
+    ComponentTypeEnum,
+    HealthCheckResponse,
+    HealthStatusEnum,
+    LivenessProbeResponse,
+    ReadinessProbeResponse,
+    SystemMetricsSchema,
+)
 from app.schemas.interview_report import (
     ArtifactsExecutionSummarySchema,
     ComprehensiveInterviewReportDTO,
@@ -267,6 +276,14 @@ __all__ = [
     "FeedbackReportRead",
     "ImprovementTipSchema",
     "LearningResourceSchema",
+    # Health
+    "ComponentHealthSchema",
+    "ComponentTypeEnum",
+    "HealthCheckResponse",
+    "HealthStatusEnum",
+    "LivenessProbeResponse",
+    "ReadinessProbeResponse",
+    "SystemMetricsSchema",
     # Interview Report
     "ArtifactsExecutionSummarySchema",
     "ComprehensiveInterviewReportDTO",
