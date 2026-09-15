@@ -1,0 +1,60 @@
+{
+  "slug": "multi-channel-notification-engine",
+  "title": "Design a Scalable Multi-Channel Notification Engine",
+  "summary": "Design an enterprise-scale distributed notification engine supporting prioritized email, SMS, push notifications, and in-app alerts with user preferences and deduplication.",
+  "description": "Design a distributed notification system powering customer communications across iOS Push (APNs), Android Push (FCM), SMS (Twilio), and transactional Email (SendGrid/SES). The platform ingests notification triggers from upstream microservices, enforces user channel preferences and quiet-hour windows, deduplicates repetitive events, dynamically throttles dispatch to adhere to third-party vendor rate limits, and provides comprehensive delivery tracking with dead-letter queue resilience.",
+  "difficulty": "medium",
+  "functional_requirements": [
+    "Support multiple delivery channels: Mobile Push (APNs, FCM), SMS, Transactional Email, and In-App notification feed.",
+    "Enforce user preferences and opt-out rules per category (security, transactional, marketing), including time-zone aware quiet hours.",
+    "Classify notifications into priority tiers: High Priority (OTPs, fraud alerts) and Low/Bulk Priority (newsletters, promotional offers).",
+    "Perform automated deduplication within a configurable sliding time window (e.g. 10 minutes) using idempotency keys.",
+    "Support localized dynamic template rendering with parameter interpolation.",
+    "Track end-to-end delivery lifecycle states (queued, dispatched, delivered, bounced, opened, failed) and expose status query APIs."
+  ],
+  "non_functional_requirements": [
+    "High Throughput: Ingest and process 100,000,000 notifications per day with peak burst handling of 10,000 QPS.",
+    "Guaranteed At-Least-Once Delivery: Critical security notifications must never be dropped due to system crashes or temporary node restarts.",
+    "Low Latency for High-Priority Alerts: High-priority security messages must reach third-party gateways within 5 seconds (p99).",
+    "Third-Party Provider Fault Tolerance: Resilient circuit breaking with automatic multi-vendor failover (e.g. fallback from primary SMS provider to backup).",
+    "Strict Isolation: Bulk promotional campaigns must never block or degrade transactional verification message throughput."
+  ],
+  "scale_targets": {
+    "daily_notifications": 100000000,
+    "average_ingestion_qps": 1160,
+    "peak_ingestion_qps": 10000,
+    "delivery_latency_high_priority_seconds": 5.0,
+    "delivery_latency_bulk_minutes": 15.0,
+    "notification_payload_kb": 2.0,
+    "daily_storage_gb": 200,
+    "annual_storage_tb": 73.0
+  },
+  "key_challenges": [
+    "Idempotency & Deduplication: Constructing deterministic cache keys in Redis (SHA256 of user_id + event_type + content_hash) with atomic SETNX to prevent duplicate user annoyance.",
+    "Priority inversion prevention: Isolating high-priority transactional traffic from massive bulk marketing campaigns using dedicated partitioned queue topics.",
+    "Third-party rate limiting & backpressure: Implementing distributed Token Bucket limiters per external provider to avoid HTTP 429 throttling and account suspension.",
+    "Stale device token cleanup: Processing feedback loops from Apple APNs and Google FCM to deactivate invalid registration tokens.",
+    "Resilience with Dead Letter Queues (DLQ): Moving permanently failed notifications to a DLQ after exponential backoff retries for manual audit or batch reprocessing."
+  ],
+  "reference_solution": {
+    "architecture_pattern": "Asynchronous event-driven pipeline utilizing distributed message brokers, decoupled worker pools, and priority queues",
+    "core_components": [
+      "Stateless Notification Ingestion Gateway exposing REST/gRPC endpoints and validating idempotency keys",
+      "Redis Cluster storing active idempotency keys with TTL and caching user delivery preference profiles",
+      "Apache Kafka message broker maintaining segregated topics (priority.high, priority.medium, priority.bulk)",
+      "Template Rendering Engine fetching localized templates and interpolating dynamic variables",
+      "Channel Dispatcher Workers (Push Workers, SMS Workers, Email Workers) managing outbound connection pools",
+      "Provider Adapter Layer with client-side rate limiting and automatic multi-vendor circuit breaker failover",
+      "Dead Letter Queue (DLQ) capturing unrecoverable delivery failures after 5 exponential backoff retries",
+      "Delivery Status Webhook Receiver updating notification status records in PostgreSQL and ClickHouse"
+    ],
+    "deduplication_strategy": "Redis SET key value NX EX 600 using a deterministic hash of (user_id, category, idempotency_token). If the key exists, the request returns 200 OK immediately without queuing duplicate messages.",
+    "priority_routing": "High-priority messages bypass standard queues and route to a dedicated Kafka topic with over-provisioned worker pools, guaranteeing sub-5 second delivery."
+  },
+  "tag_slugs": [
+    "asynchronous-processing",
+    "message-queues",
+    "event-driven",
+    "distributed-systems"
+  ]
+}
