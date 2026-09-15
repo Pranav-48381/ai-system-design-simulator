@@ -1,0 +1,59 @@
+{
+  "slug": "global-video-streaming-platform",
+  "title": "Design a Global Video Streaming Platform (YouTube / Netflix)",
+  "summary": "Design an end-to-end distributed video ingestion, transcoding pipeline, adaptive bitrate streaming, and multi-CDN distribution architecture.",
+  "description": "Design a planetary-scale video streaming platform capable of serving hundreds of millions of daily active users. The architecture must handle reliable chunked video uploads from creators, orchestrate a distributed GPU-accelerated transcoding pipeline into Adaptive Bitrate (ABR) formats (HLS / MPEG-DASH), deliver video segments via a multi-CDN edge network with sub-1.5s startup latency, and track cross-device playback checkpoints.",
+  "difficulty": "hard",
+  "functional_requirements": [
+    "Resumable Chunked Video Uploads: Enable creators to upload multi-gigabyte raw video files with seamless resumption across network disconnections.",
+    "Distributed Transcoding Pipeline: Automatically transcode raw footage into multiple resolutions (4K, 1080p, 720p, 480p, 360p) and codecs (H.264, VP9, AV1).",
+    "Adaptive Bitrate Streaming (ABR): Stream media using HLS/DASH protocols, dynamically adjusting stream quality based on client device network bandwidth.",
+    "Metadata, Search & Catalog: Manage video titles, descriptions, categories, thumbnails, and channel associations with fast catalog querying.",
+    "Playback Resumption: Continuously record user playback progress to enable instant resume across smart TVs, mobile apps, and web browsers."
+  ],
+  "non_functional_requirements": [
+    "Ultra-low Startup Buffering: P95 video playback startup time strictly under 1.5 seconds.",
+    "High Availability & CDN Offload: 99.99% playback availability with >= 95% of video chunk traffic served directly from edge CDN Points of Presence (PoPs).",
+    "Transcoding Throughput: Transcode uploaded media within 1.0x of the video runtime (a 10-minute video finishes encoding within 10 minutes).",
+    "Durability & Storage Tiering: Master videos and segments must achieve 99.999999999% (11 9s) durability with automated tiering to cold storage (Glacier) for aging content.",
+    "Global Scale: Support over 1 billion daily video streams and handle peak global egress bandwidth exceeding 100 Tbps."
+  ],
+  "scale_targets": {
+    "daily_active_users": 200000000,
+    "daily_video_views": 1000000000,
+    "daily_video_uploads": 5000000,
+    "average_video_size_mb": 300,
+    "daily_upload_storage_tb": 1500.0,
+    "average_stream_bitrate_mbps": 3.0,
+    "peak_streaming_bandwidth_tbps": 120.0,
+    "cdn_edge_cache_hit_ratio": 0.95
+  },
+  "key_challenges": [
+    "Distributed Transcoding Pipeline: Splitting raw videos into Group of Pictures (GOP) chunks, running parallel transcoding tasks across GPU clusters, and assembling unified HLS playlist manifests (.m3u8).",
+    "Adaptive Bitrate & Client Buffer Management: Generating multi-bitrate segment variants and tuning chunk duration (2 to 6 seconds) to minimize buffering without excessive HTTP request overhead.",
+    "Multi-CDN Edge Steering: Dynamically balancing traffic across multiple CDN vendors (Akamai, Cloudflare, Fastly) using real-time client telemetry to optimize latency and bandwidth costs.",
+    "Atomic View Counting on Viral Media: Preventing database lock contention during viral events by accumulating view counts in Redis HyperLogLog / atomic memory counters and asynchronously flushing to persistence.",
+    "Cost-effective Storage Lifecycle: Implementing intelligent tiered storage migrating unviewed video renditions to lower-cost object storage while keeping high-demand segments warm in edge memory."
+  ],
+  "reference_solution": {
+    "architecture_pattern": "Decoupled chunked ingestion pipeline, DAG-based distributed transcoding cluster, Multi-CDN edge delivery network, and polyglot persistence architecture",
+    "core_components": [
+      "Upload Ingestion Service with S3/GCS Multipart Upload and resumable Tus protocol support",
+      "Raw Video Staging Bucket triggering asynchronous transcode events via cloud pub/sub",
+      "Transcoding Workflow Engine (DAG Orchestrator) dividing videos into GOP slices and scheduling worker jobs",
+      "Transcoding GPU Fleet encoding parallel slices into H.264/AV1 bitrates and generating HLS manifests",
+      "Master Segment Object Storage storing finalized .m3u8 playlists and 4-second .ts/.m4s video chunks",
+      "Multi-CDN Edge Distribution Layer caching video chunks at ISP edge nodes closest to consumers",
+      "Metadata & Catalog Service (PostgreSQL) storing video metadata, tags, and channel relations",
+      "User Playback Progress Store (Cassandra / DynamoDB) persisting frequent watch progress updates with low latency"
+    ],
+    "hls_segmentation_strategy": "Raw video is split into independent 4-second chunks at keyframe boundaries (I-frames), encoded in parallel across 5 standard resolutions, and compiled into a master HLS index manifest referencing bitrate variants.",
+    "cdn_traffic_steering": "A smart DNS / latency-based router steers playback requests to the optimal CDN provider based on real-time end-user telemetry and provider SLA health."
+  },
+  "tag_slugs": [
+    "video-streaming",
+    "distributed-processing",
+    "cdn-and-edge",
+    "object-storage"
+  ]
+}
