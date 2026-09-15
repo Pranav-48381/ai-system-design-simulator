@@ -1,0 +1,71 @@
+{
+  "slug": "url-shortener-tinyurl",
+  "title": "Design a Scalable URL Shortener (TinyURL)",
+  "summary": "Design a highly scalable, fault-tolerant distributed URL shortening service capable of handling hundreds of millions of daily redirections with sub-15ms latency.",
+  "description": "Design a distributed URL shortening service like TinyURL or Bitly. The system allows users to submit a long URL and obtain a compact, unique alias. When users access the short link, the system redirects them to the original destination. The service must handle massive read-heavy traffic, prevent hash collision loops, ensure 99.99% redirection availability, and support optional custom aliases and click analytics.",
+  "difficulty": "medium",
+  "functional_requirements": [
+    "Given a long URL, generate a unique, compact 7-character short alias.",
+    "Given a short alias, redirect the client to the original long URL with sub-15ms latency.",
+    "Allow users to specify optional custom aliases with real-time uniqueness validation.",
+    "Support optional Time-To-Live (TTL) expiration timestamps for generated links.",
+    "Capture click analytics asynchronously (click count, timestamp, referrer header, user-agent, geo-location)."
+  ],
+  "non_functional_requirements": [
+    "High Availability: 99.99% uptime for redirection operations; read requests must succeed even during backend analytics degradation.",
+    "Ultra-low Latency: P99 redirection latency strictly under 15ms globally.",
+    "Read-Heavy Scaling: Architected for a 100:1 read-to-write traffic ratio.",
+    "Reliable Durability: Stored URL mappings must never be lost prematurely before explicit expiration.",
+    "Compact & Collision-Free: Short aliases must be 7 characters using Base62 ([a-zA-Z0-9]) providing ~3.5 trillion distinct keys without collision loops."
+  ],
+  "scale_targets": {
+    "daily_active_users": 100000000,
+    "new_urls_per_day": 100000000,
+    "read_write_ratio": "100:1",
+    "write_qps": 1160,
+    "peak_write_qps": 2500,
+    "read_qps": 116000,
+    "peak_read_qps": 250000,
+    "url_record_size_bytes": 500,
+    "daily_storage_gb": 50,
+    "five_year_storage_tb": 91.25,
+    "cache_memory_80_20_rule_gb": 170
+  },
+  "key_challenges": [
+    "Unique alias generation at scale: Comparing Hash-and-truncate with collision retries vs Pre-generated Key Generation Service (KGS) vs Distributed Snowflake counters.",
+    "Cache stampede & eviction: Implementing Redis clusters with LRU eviction and probabilistic early expiration (XFetch) for trending/viral links.",
+    "301 Permanent Redirect vs 302 Found: Balancing client browser caching benefits with the requirement for server-side click analytics tracking.",
+    "Data partitioning & sharding: Sharding by short_key hash to eliminate hot partitions and ensure uniform cluster distribution.",
+    "Asynchronous analytics ingestion: Offloading click event logging to Kafka message queues to prevent database write bottlenecks on the redirection path."
+  ],
+  "reference_solution": {
+    "architecture_pattern": "Stateless microservices with distributed caching and decoupled async event stream",
+    "core_components": [
+      "Global CDN & Anycast DNS for edge SSL termination and static asset caching",
+      "Stateless API Gateway / Application Service tier scaled horizontally behind L7 Load Balancer",
+      "Dedicated Key Generation Service (KGS) pre-allocating batches of unique Base62 tokens in memory",
+      "Distributed Redis Cache Cluster deployed in read-replica configuration caching hot URL mappings",
+      "Horizontally partitioned NoSQL / Key-Value Store (DynamoDB or Cassandra) partitioned by short_key",
+      "Apache Kafka message broker streaming access log events to ClickHouse for OLAP aggregation"
+    ],
+    "short_code_strategy": "Pre-generated 7-character Base62 keys from a dedicated Key Generation Service (KGS) maintaining token pools in memory, completely eliminating hash collision checks at creation time.",
+    "redirect_strategy": "HTTP 302 Found redirect returned to force client traffic through the edge layer for real-time analytics attribution while caching mappings in Redis.",
+    "storage_schema": {
+      "table": "url_mappings",
+      "partition_key": "short_key (String, 7 chars)",
+      "attributes": {
+        "original_url": "String(2048)",
+        "user_id": "UUID (nullable)",
+        "created_at": "Timestamp",
+        "expires_at": "Timestamp (nullable)",
+        "click_count": "BigInteger"
+      }
+    }
+  },
+  "tag_slugs": [
+    "distributed-caching",
+    "key-generation",
+    "read-heavy-systems",
+    "partitioning-and-sharding"
+  ]
+}
