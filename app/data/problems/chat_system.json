@@ -1,0 +1,73 @@
+{
+  "slug": "real-time-chat-system",
+  "title": "Design a Real-Time Chat System (Slack / WhatsApp)",
+  "summary": "Design a massively distributed real-time messaging architecture supporting 1-on-1 private messaging, large group channels, presence tracking, and offline push sync.",
+  "description": "Design a real-time messaging platform supporting 50 million daily active users exchanging hundreds of millions of messages daily. The system must maintain millions of concurrent persistent WebSocket connections, guarantee sub-100ms end-to-end delivery latency, provide strict message ordering within conversations, manage online/offline presence tracking, support rich media attachments, and reliably fall back to mobile push notifications for offline users.",
+  "difficulty": "hard",
+  "functional_requirements": [
+    "1-on-1 Direct Messaging: Private, low-latency messaging between two users with delivery receipts (sent, delivered, read).",
+    "Group Chat Channels: Support public and private group channels accommodating up to 10,000 active participants.",
+    "Real-Time Presence Tracking: Display online, away, and offline status with low-overhead periodic heartbeats.",
+    "Cross-Device Synchronization: Seamless multi-device synchronization keeping unread counts and message history aligned across desktop, web, and mobile.",
+    "Media File Sharing: Support image, audio, and document uploads via secure pre-signed URLs and distributed CDN distribution.",
+    "Offline Handoff: Deliver notifications via APNs and FCM when recipients are disconnected, backfilling history upon reconnection."
+  ],
+  "non_functional_requirements": [
+    "Ultra-low Delivery Latency: P99 end-to-end message transit latency strictly under 100ms for connected clients.",
+    "Zero Message Loss & Durability: Messages acknowledged by the server must be durably persisted across multiple availability zones.",
+    "Strict Message Ordering: Guarantee casual and chronological sequence ordering within every channel or direct conversation.",
+    "High Concurrency: Maintain 10,000,000 simultaneous open WebSocket / TCP socket connections.",
+    "High Availability: 99.99% service availability with automatic failover during gateway instance crashes."
+  ],
+  "scale_targets": {
+    "daily_active_users": 50000000,
+    "concurrent_connections": 10000000,
+    "messages_per_day": 500000000,
+    "average_message_qps": 58000,
+    "peak_message_qps": 150000,
+    "average_message_size_bytes": 250,
+    "daily_message_storage_gb": 125,
+    "five_year_message_storage_tb": 228.0,
+    "media_uploads_per_day": 50000000,
+    "daily_media_storage_tb": 50.0
+  },
+  "key_challenges": [
+    "Stateful WebSocket connection management: Distributing millions of persistent TCP connections across gateway instances and maintaining a dynamic user-to-server routing table in Redis.",
+    "Group fan-out explosion: Mitigating write amplification in large channels by switching from fan-out-on-write to fan-out-on-read with channel sequence cursors.",
+    "Distributed message ordering: Generating collision-free 64-bit sequence numbers (Twitter Snowflake) that preserve monotonic time order per conversation without distributed locks.",
+    "Presence thundering herd: Handling 10 million heartbeats every 30 seconds without overwhelming Redis or creating broadcast storms on channel presence updates.",
+    "Reconnection bursts & offline catch-up: Efficiently fetching unread messages using pagination tokens (`since_message_id`) without causing database connection starvation."
+  ],
+  "reference_solution": {
+    "architecture_pattern": "Stateful edge connection gateways connected via distributed message fabric to horizontally partitioned NoSQL persistence and ephemeral presence clusters",
+    "core_components": [
+      "Layer 4 TCP Load Balancer routing client traffic across horizontally auto-scaled WebSocket Gateway nodes",
+      "WebSocket Gateway Fleet terminating TLS and maintaining bidirectional connections with active clients",
+      "Session Registry (Redis Cluster) mapping user_id and device_id to current gateway pod IP addresses",
+      "Message Distribution Fabric (Apache Kafka / NATS) routing chat events to target gateway servers and persistence queues",
+      "Chat Message Store (Apache Cassandra / ScyllaDB) using partition key `channel_id` and clustering key `message_id DESC` for rapid range retrieval",
+      "Presence Service leveraging Redis Sorted Sets and TTL keys with 30-second heartbeat windows",
+      "Push Notification Gateway queuing APNs/FCM delivery jobs for offline recipients",
+      "Object Storage (Amazon S3 / Google Cloud Storage) behind CloudFront CDN for media attachments"
+    ],
+    "message_schema": {
+      "table": "messages",
+      "primary_key": "(conversation_id) CLUSTERING KEY (message_id DESC)",
+      "fields": {
+        "conversation_id": "UUID",
+        "message_id": "BigInt (Snowflake timestamped)",
+        "sender_id": "UUID",
+        "content": "Text",
+        "media_url": "Text (nullable)",
+        "created_at": "Timestamp"
+      }
+    },
+    "fan_out_model": "Hybrid fan-out: Direct messages and small groups (<100 members) push events directly to recipient sockets; large channels broadcast message notifications to connected channel subscribers via Kafka topics, with clients maintaining read offset cursors."
+  },
+  "tag_slugs": [
+    "websockets",
+    "real-time-systems",
+    "distributed-systems",
+    "nosql-storage"
+  ]
+}
