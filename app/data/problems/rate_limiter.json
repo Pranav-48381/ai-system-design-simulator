@@ -1,0 +1,57 @@
+{
+  "slug": "distributed-api-rate-limiter",
+  "title": "Design a Distributed API Rate Limiter",
+  "summary": "Design a low-latency, distributed API rate limiting tier to protect upstream microservices from resource exhaustion, cascading failures, and abuse.",
+  "description": "Design a distributed API rate limiting service deployed across an enterprise cloud gateway. The system monitors and throttles inbound client requests based on client IP, authenticated User ID, or API Key. The rate limiter must evaluate rules with sub-2ms latency overhead at 1,000,000 peak QPS, support dynamic configuration updates, synchronize state across distributed nodes without race conditions, and return standard RFC HTTP 429 responses with Retry-After headers.",
+  "difficulty": "hard",
+  "functional_requirements": [
+    "Throttle incoming HTTP requests based on configurable dimensions: client IP address, authenticated User ID, or API Key.",
+    "Support configurable rate limits and time granularities (e.g., 100 requests per minute, 50,000 requests per hour).",
+    "Return HTTP 429 (Too Many Requests) when quota is exhausted, returning X-RateLimit-Limit, X-RateLimit-Remaining, and Retry-After headers.",
+    "Support hierarchical rule overrides (e.g., global tier limit vs endpoint-specific limits on /auth/login).",
+    "Enable dynamic rule creation and modification through a management API without restarting gateway nodes."
+  ],
+  "non_functional_requirements": [
+    "Ultra-low Evaluation Latency: P99 decision latency strictly under 2ms to prevent perceptible overhead on upstream services.",
+    "Distributed Accuracy & Atomic State: Prevent race conditions across parallel gateway worker threads without distributed deadlock.",
+    "High Availability & Graceful Degradation: Support configurable fail-open (for standard reads) or fail-closed (for authentication/payments) policies if the cache cluster becomes partitioned.",
+    "Memory Efficiency: Store client bucket tracking data within a compact memory footprint to comfortably track tens of millions of active keys.",
+    "Massive Scale: Seamlessly handle sustained loads of 500,000 QPS with traffic spikes up to 1,000,000 QPS."
+  ],
+  "scale_targets": {
+    "daily_active_users": 50000000,
+    "active_api_keys": 10000000,
+    "average_qps": 500000,
+    "peak_qps": 1000000,
+    "p99_evaluation_latency_ms": 2.0,
+    "client_state_size_bytes": 64,
+    "total_cache_memory_gb": 32,
+    "distributed_nodes": 50
+  },
+  "key_challenges": [
+    "Rate limiting algorithm selection: Comparing Token Bucket, Leaky Bucket, Fixed Window, Sliding Window Log, and Sliding Window Counter across memory usage and accuracy.",
+    "Race condition prevention in distributed clusters: Eliminating write conflicts and read-modify-write delays using atomic Redis Lua scripts or Redis cell modules.",
+    "Multi-datacenter synchronization latency: Designing edge-local rate limiting with asynchronous batch syncing versus global centralized Redis clusters.",
+    "Failure mode management: Implementing resilient circuit breaking to prevent rate limiter outages from causing total gateway downtime.",
+    "Client identification & IP spoofing: Extracting authentic client identifiers from X-Forwarded-For headers through trusted proxy validation chains."
+  ],
+  "reference_solution": {
+    "algorithm_choice": "Sliding Window Counter algorithm for optimal balance between strict burst protection and O(1) constant memory consumption, paired with Token Bucket for burstable endpoints.",
+    "core_components": [
+      "Layer 7 Load Balancer distributing requests across Envoy/Kong API Gateway instances",
+      "Gateway Rate Limiting Filter executing atomic Lua scripts against distributed memory tier",
+      "Redis Cluster deployed in master-replica topology partitioned with consistent hashing on rate limit keys",
+      "Policy Management Service storing global rules in PostgreSQL and publishing live updates via Redis Pub/Sub",
+      "Local Gateway In-Memory LRU Cache storing rule definitions with short TTL to minimize network roundtrips",
+      "Asynchronous Kafka telemetry stream capturing 429 events for security anomaly detection"
+    ],
+    "redis_atomic_lua_strategy": "A custom Redis Lua script executes EVALSHA to read the current count, compare against window timestamp, increment atomic counter, set expiration TTL, and return remaining quota in a single network round-trip.",
+    "failure_handling_policy": "Circuit breaker trips to Fail-Open for non-sensitive public endpoints to preserve user experience, and Fail-Closed with 503 for critical authentication and payment checkout endpoints."
+  },
+  "tag_slugs": [
+    "rate-limiting",
+    "distributed-systems",
+    "caching-and-memory",
+    "high-availability"
+  ]
+}
