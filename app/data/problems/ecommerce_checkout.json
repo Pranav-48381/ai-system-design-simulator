@@ -1,0 +1,59 @@
+{
+  "slug": "high-concurrency-flash-sale-checkout",
+  "title": "Design a High-Concurrency Flash Sale Checkout System",
+  "summary": "Design an ultra-low-latency, resilient e-commerce checkout and inventory reservation system capable of handling 500,000+ concurrent checkout attempts without overselling.",
+  "description": "Design an e-commerce checkout and inventory reservation architecture built for extreme flash sale traffic events (e.g., Black Friday, product drops, ticket sales). When a limited inventory product becomes available, hundreds of thousands of users attempt to purchase items simultaneously within seconds. The system must strictly guarantee zero overselling (inventory consistency), minimize lock contention, provide deterministic idempotency for orders and payments, enforce 15-minute cart reservation windows with automatic inventory release upon timeout, and gracefully handle payment gateway latency and failures.",
+  "difficulty": "hard",
+  "functional_requirements": [
+    "Product Flash Sale Page & Real-Time Stock Status: Display live remaining stock levels and sale countdown timer with edge caching.",
+    "High-Concurrency Inventory Reservation: Atomically reserve stock for a candidate order, strictly ensuring no item is oversold even under 100,000+ concurrent reservation attempts.",
+    "Order Placement & Idempotency: Generate a unique immutable order linked to the reserved stock, enforcing end-to-end idempotency via client transaction tokens.",
+    "Time-Bounded Cart Reservation TTL: Enforce a strict 10 to 15-minute payment completion window; automatically release reserved inventory back to available stock if payment is not confirmed.",
+    "Asynchronous Payment Processing & Confirmation: Securely interface with third-party payment gateways (Stripe/PayPal), handle webhooks, and finalize order completion."
+  ],
+  "non_functional_requirements": [
+    "Zero Overselling / Strict Consistency: Inventory reservation must be strictly atomic; negative inventory balances or race-condition double-sells must never occur under any circumstance.",
+    "Ultra-Low Reservation Latency: P99 inventory reservation latency strictly under 50ms at peak load to ensure responsive user experience.",
+    "Extreme Peak Throughput: Sustain peak write throughput of >= 100,000 reservation requests per second during the first 60 seconds of a flash drop.",
+    "Idempotency & Double-Charge Protection: Every purchase attempt must carry an idempotency key preventing duplicate payment authorization or double deduction.",
+    "High Availability & Graceful Queueing: 99.99% system availability during flash events; reject or queue excess traffic with deterministic backpressure rather than crashing backend databases."
+  ],
+  "scale_targets": {
+    "registered_flash_sale_users": 10000000,
+    "concurrent_active_shoppers": 1000000,
+    "limited_inventory_item_units": 50000,
+    "peak_reservation_qps": 100000,
+    "average_cart_reservation_ttl_seconds": 900,
+    "payment_timeout_seconds": 600,
+    "p99_reservation_latency_ms": 35,
+    "payment_gateway_concurrency_limit": 5000,
+    "database_isolation_level": "SERIALIZABLE_OR_REDIS_LUA_ATOMIC"
+  },
+  "key_challenges": [
+    "Hotspot Key Contention & Lock Serialization: Traditional relational database row locks (SELECT ... FOR UPDATE) cause severe connection pool starvation and database lock collapse at 100k QPS on a single product SKU.",
+    "Distributed Inventory Reservation: Implementing atomic in-memory pre-deduction via Redis Lua scripts or multi-bucket sharded inventory counters before hitting relational databases.",
+    "Virtual Waiting Room & Fair Queueing: Deploying token-bucket or queue-based traffic shapers (e.g., Redis Streams / Cloudflare Waiting Room) to admit requests at the system's exact processing capacity.",
+    "Inventory Rollback on Abandonment or Payment Failure: Implementing reliable delayed scheduling (Redis TTL key expiration events, RabbitMQ dead-letter exchanges, or transactional outbox) to restore stock.",
+    "Two-Phase Commit vs Saga Pattern: Coordinating inventory reservation, payment authorization, order creation, and fulfillment without long-lived blocking distributed locks."
+  ],
+  "reference_solution": {
+    "architecture_pattern": "Multi-tiered traffic shedding with Virtual Waiting Room, Redis atomic Lua inventory pre-allocation, decoupled async order fulfillment pipeline (Saga pattern), and event-driven delayed inventory release",
+    "core_components": [
+      "Edge CDN & Virtual Waiting Room regulating user ingress and handing out cryptographically signed purchase tokens",
+      "Stateless Checkout API Gateway validating purchase tokens and user rate limits",
+      "Distributed Redis Inventory Cluster storing SKU stock counters and executing atomic Lua scripts for instant reservation",
+      "Delayed Message Queue (Redis ZSET or RabbitMQ DLX) tracking 15-minute reservation timeouts for automatic stock restoration",
+      "Order Service persisting reserved orders in PostgreSQL with unique idempotency keys",
+      "Payment Worker Fleet executing asynchronous payment transactions with circuit breakers",
+      "Transactional Outbox & Kafka streaming finalized order events to ERP and Warehouse systems"
+    ],
+    "atomic_inventory_strategy": "Redis Lua script executes atomic conditional decrement (DECRBY) if stock >= requested_quantity; if successful, stores reservation ID with 15-minute TTL; if stock is 0, returns instant Out of Stock without touching primary SQL database.",
+    "saga_orchestration_strategy": "Choreographed Saga: Step 1 (Redis Reservation) -> Step 2 (Order Created in 'Pending Payment' state) -> Step 3 (Payment Gateway Auth) -> Step 4 (Order 'Paid' & Stock Permanently Committed). On payment failure or TTL timeout, compensating transaction increments Redis stock."
+  },
+  "tag_slugs": [
+    "high-concurrency",
+    "inventory-reservation",
+    "distributed-transactions",
+    "e-commerce"
+  ]
+}
