@@ -1,0 +1,62 @@
+{
+  "slug": "time-series-metrics-alerting-system",
+  "title": "Design a Distributed Time-Series Metrics & Alerting System",
+  "summary": "Design a planetary-scale time-series metrics collection, real-time aggregation, dashboard querying, and alerting platform handling millions of data points per second.",
+  "description": "Design a scalable, highly reliable distributed time-series monitoring and alerting platform similar to Prometheus, Datadog, or Thanos. The system collects numerical metric data points with dynamic labels/tags from tens of thousands of client servers, containers, and microservices. It must support high-throughput write ingestion, time-series compression (e.g., Gorilla XOR and delta-of-delta encoding), multi-resolution retention with downsampling, high-cardinality label indexing, sub-second dashboard queries, and real-time threshold and rate-of-change alert rule evaluation with deduplication and escalation.",
+  "difficulty": "hard",
+  "functional_requirements": [
+    "Ingest metric data points formatted as (metric_name, timestamp, value, tags/labels) via HTTP, gRPC, and push/pull agent collectors.",
+    "Query historical and real-time time-series data with aggregations (sum, avg, p50, p95, p99, rate, irate) over custom time windows and downsampled resolutions.",
+    "Define dynamic alerting rules (static threshold, rate of change, absent metrics) evaluated periodically (e.g., every 15-60 seconds).",
+    "Dispatch alert notifications to configured notification channels (PagerDuty, Slack, Webhooks, Email) with alert state transitions (Firing, Resolved, Silenced) and deduplication.",
+    "Provide multi-tenant metric namespace isolation and role-based access control for query and alert definition."
+  ],
+  "non_functional_requirements": [
+    "Ultra-High Ingestion Throughput: Ingest >= 1,000,000 metric data points per second with P99 ingestion latency under 50ms.",
+    "Interactive Query Latency: P95 query execution time strictly under 500ms for standard 24-hour dashboard visualization panels.",
+    "Durability & High Availability: 99.99% ingestion uptime with Write-Ahead Logging (WAL) and multi-node replication to prevent data loss.",
+    "Storage Efficiency & Downsampling: Achieve >= 10x storage compression via Gorilla delta-of-delta timestamps and XOR floating-point value compression, transitioning raw 10s data to 1m resolution at 7 days and 1h resolution at 30 days.",
+    "Alerting Reliability & Near Real-Time Evaluation: Alert rules evaluated within 15 seconds of metric ingestion without missed alerts or notification storms."
+  ],
+  "scale_targets": {
+    "monitored_hosts_and_services": 50000,
+    "metrics_per_host": 200,
+    "collection_interval_seconds": 10,
+    "ingestion_qps": 1000000,
+    "peak_ingestion_qps": 2500000,
+    "raw_datapoint_size_bytes": 64,
+    "compressed_datapoint_size_bytes": 2.5,
+    "daily_compressed_storage_gb": 216.0,
+    "one_year_retention_storage_tb": 15.0,
+    "dashboard_query_qps": 500,
+    "active_alert_rules": 50000
+  },
+  "key_challenges": [
+    "High write throughput and out-of-order data point ingestion handling without locking bottlenecks.",
+    "High-cardinality tag explosion: Preventing inverted index bloat and excessive memory consumption when developers add dynamic labels like user_id or IP address.",
+    "Time-Series Data Compression: Implementing Gorilla encoding (double-delta timestamp compression and XOR floating-point value compression) to reduce raw 16-byte pairs down to ~1.37 bytes.",
+    "Tiered Downsampling Pipeline: Asynchronously computing rollups (min, max, sum, count, avg) across time blocks and migrating data from fast NVMe SSD storage to cost-effective S3 object storage.",
+    "Scalable Alert Evaluation: Partitioning tens of thousands of alert queries across worker fleets to prevent evaluation delays and eliminating flapping alerts using duration windows (for 5m)."
+  ],
+  "reference_solution": {
+    "architecture_pattern": "Distributed Time-Series Database (TSDB) with decoupled ingestion buffer, streaming metric indexer, tiered storage engine, and distributed alert rule evaluation workers",
+    "core_components": [
+      "Edge Agent Collectors & Push Gateways scraping metrics at 10s intervals and buffering in local memory",
+      "Stateless Ingestion Gateway fleet routing metric batches using consistent hashing on series hash",
+      "Kafka / Redpanda Ingestion Buffer decoupling bursty write traffic from TSDB storage nodes",
+      "TSDB Storage Engine (Thanos/Cortex/Prometheus architecture) maintaining in-memory 2-hour head chunks backed by Write-Ahead Log (WAL)",
+      "Inverted Index Service mapping label pairs (e.g., service=payment, region=us-east) to 64-bit series IDs",
+      "Compactor & Downsampler Worker fleet consolidating 2-hour immutable blocks into daily chunks and generating 5m/1h rollups for S3 object storage",
+      "Distributed Query Engine distributing PromQL/M3QL queries across in-memory cache and object storage",
+      "Alert Evaluation Engine evaluating PromQL alert expressions on scheduled ticks and routing to Alertmanager"
+    ],
+    "compression_strategy": "Gorilla double-delta timestamp compression with variable-bit encoding and XOR floating-point mantissa/exponent bit-packing achieving ~1.5 to 2.5 bytes per sample.",
+    "high_cardinality_mitigation": "Enforcing server-side cardinality quotas per metric name, dropping volatile labels at the ingestion gateway, and storing inverted index postings in Roaring Bitmaps."
+  },
+  "tag_slugs": [
+    "time-series",
+    "monitoring-and-metrics",
+    "high-throughput-ingestion",
+    "distributed-storage"
+  ]
+}
