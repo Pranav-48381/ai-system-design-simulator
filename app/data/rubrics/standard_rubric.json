@@ -1,0 +1,72 @@
+{
+  "name": "Standard Big-Tech 5-Pillar System Design Rubric",
+  "description": "Industry-standard evaluation framework assessing candidates across requirements gathering, architectural structure, data storage design, resilience and fault tolerance, and communication with trade-off justification.",
+  "is_default": true,
+  "criteria": [
+    {
+      "pillar": "requirements_and_clarification",
+      "title": "Scope Boundary & Requirement Decomposition",
+      "description": "Ability to proactively distinguish functional vs. non-functional requirements, clarify ambiguous assumptions, define SLA/SLO boundaries, and estimate capacity constraints.",
+      "weight": 1.0,
+      "level_expectations": {
+        "junior": "Relies heavily on interviewer prompts; may jump prematurely into database tables without clarifying scale, traffic patterns, or core constraints.",
+        "mid": "Identifies primary functional requirements and asks standard non-functional questions (e.g., QPS, latency, availability); performs rough math with guidance.",
+        "senior": "Proactively establishes system boundaries, explicit SLAs (e.g., 99.99% availability, P99 < 50ms), and drives back-of-the-envelope estimations with clear formulas.",
+        "staff": "Frames requirements within business impact and organizational constraints; defines failure blast radius, multi-region regulatory compliance, and budget limits early.",
+        "principal": "Challenges foundational assumptions; reframes the core business problem; identifies cost-value inflection points and enterprise ecosystem dependencies."
+      }
+    },
+    {
+      "pillar": "system_architecture_and_data_flow",
+      "title": "Component Architecture & End-to-End Data Flow",
+      "description": "Ability to lay out clean client-server topologies, define microservice boundaries, establish robust API contracts, and trace synchronous/asynchronous data workflows.",
+      "weight": 1.0,
+      "level_expectations": {
+        "junior": "Draws monolithic or overly simplified boxes without clear API definitions, protocol selection, or transport awareness.",
+        "mid": "Designs basic tiered architecture (Clients -> Load Balancer -> Web App -> DB); defines standard REST endpoints with reasonable separation of concerns.",
+        "senior": "Architects clean distributed services; designs decoupled event-driven workflows with queues/pub-sub; specifies clear API schemas and idempotent contracts.",
+        "staff": "Optimizes system-wide topology for team ownership, blast radius containment, multi-datacenter traffic routing, and edge computing offload.",
+        "principal": "Designs modular, evolvable architectures; models complex distributed protocols and multi-tier edge-to-core ingestion fabrics."
+      }
+    },
+    {
+      "pillar": "storage_data_model_and_scalability",
+      "title": "Data Modeling, Storage Engines & Partitioning Strategy",
+      "description": "Ability to select optimal storage paradigms (SQL, NoSQL, TSDB, Blob), design relational/document schemas, define sharding/partition keys, and design multi-tiered caching.",
+      "weight": 1.0,
+      "level_expectations": {
+        "junior": "Defaults to a single relational DB table without indexing thoughts; treats caching as a magic bullet without eviction strategies.",
+        "mid": "Chooses appropriate SQL vs NoSQL models; outlines basic database schemas and foreign keys; incorporates Redis with standard TTL expiration.",
+        "senior": "Justifies storage engine choices based on read/write access patterns; designs sharding schemes with composite partition keys; handles cache stampedes and cache invalidation.",
+        "staff": "Deeply analyzes consistency models (PACELC / CAP theorem); designs customized LSM-tree vs B-Tree tradeoffs, distributed consensus, and cross-datacenter replication topologies.",
+        "principal": "Innovates specialized hybrid storage architectures; balances hardware mechanical sympathy (IOPS, NVMe, memory bus) against cloud cost economics at planetary scale."
+      }
+    },
+    {
+      "pillar": "resilience_fault_tolerance_and_monitoring",
+      "title": "Fault Tolerance, Failure Modes & Observability",
+      "description": "Ability to identify single points of failure (SPOFs), implement resilience mechanisms (circuit breakers, retries with jitter, backpressure), and design comprehensive observability.",
+      "weight": 1.0,
+      "level_expectations": {
+        "junior": "Rarely considers server crashes, network partitions, or cascading timeouts unless prompted.",
+        "mid": "Identifies primary SPOFs (e.g., single DB instance); adds database read replicas and basic health checks.",
+        "senior": "Designs comprehensive defense-in-depth: rate limiting, circuit breakers, exponential backoff with jitter, graceful degradation, and structured distributed tracing.",
+        "staff": "Designs self-healing systems; prepares for catastrophic region-wide failovers, split-brain scenarios, thundering herds, and data reconciliation pipelines.",
+        "principal": "Defines global disaster recovery SLAs (RTO/RPO); designs chaos engineering strategies and automated canary verification across sovereign cloud regions."
+      }
+    },
+    {
+      "pillar": "communication_and_trade_off_analysis",
+      "title": "Collaborative Communication & Trade-Off Articulation",
+      "description": "Ability to drive structured discussions, communicate technical reasoning transparently, actively listen to interviewer hints, and evaluate multi-dimensional architectural trade-offs.",
+      "weight": 1.0,
+      "level_expectations": {
+        "junior": "Struggles to articulate thought process; gets defensive or stuck on minor implementation details without addressing big picture.",
+        "mid": "Communicates clearly; responds well to hints and questions; explains basic pros/cons of selected technologies.",
+        "senior": "Leads the conversation proactively with structure; explicitly presents multiple solutions and rigorously compares latency, cost, and complexity tradeoffs.",
+        "staff": "Communicates with executive-level clarity; synthesizes complex distributed dilemmas into crisp decisions; demonstrates high emotional intelligence and pedagogical leadership.",
+        "principal": "Inspires architectural confidence; articulates strategic industry paradigms; aligns engineering excellence with organizational and business priorities."
+      }
+    }
+  ]
+}
