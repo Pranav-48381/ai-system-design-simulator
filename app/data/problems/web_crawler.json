@@ -1,0 +1,61 @@
+{
+  "slug": "distributed-web-crawler",
+  "title": "Design a Distributed Scalable Web Crawler",
+  "summary": "Design a planetary-scale, polite, and fault-tolerant distributed web crawler capable of fetching, parsing, deduplicating, and indexing 10+ billion web pages per month with DNS caching and strict robots.txt compliance.",
+  "description": "Design a distributed web crawler system (similar to Googlebot or Common Crawl) capable of crawling billions of web pages across the public internet. The crawler begins with a seed set of URLs, continuously downloads HTML documents, extracts outgoing hyperlinks, discards duplicates, enforces politeness policies (avoiding overloading web servers via robots.txt and host rate limits), and stores processed documents and metadata for search engine indexing. The system must be resilient to network failures, spider traps, malicious content, and dynamic IP changes while achieving massive throughput.",
+  "difficulty": "hard",
+  "functional_requirements": [
+    "URL Frontier Management: Maintain priority and politeness-aware URL queues across billions of internet domains.",
+    "Polite & Compliant HTML Fetching: Fetch web pages honoring robots.txt rules, host rate limits (e.g., maximum 1 request per second per target host), and HTTP timeouts.",
+    "HTML Parsing & Hyperlink Extraction: Parse HTML content, extract valid canonical URLs, normalize relative links to absolute URLs, and filter unsupported MIME types.",
+    "Content & URL Deduplication: Detect and discard duplicate URLs and near-duplicate HTML content before storage.",
+    "Document Storage & Ingestion: Store raw HTML documents, compressed blobs, and extracted text/metadata in high-throughput distributed storage for downstream search indexers."
+  ],
+  "non_functional_requirements": [
+    "Massive Scale & Throughput: Crawl at least 10 billion web pages per month (~3,850 pages/second continuous, peaking at 10,000 pages/second).",
+    "Strict Politeness: Never overwhelm any web host; enforce per-domain concurrency limits and inter-request delays.",
+    "Robots.txt & HTTP Compliance: Cache robots.txt disallow directives; respect canonical tags, redirects, and HTTP status codes (200, 301, 302, 404, 429, 503).",
+    "Spider Trap & Loop Resilience: Detect infinite URL loops, calendar traps, dynamic query parameter explosions, and excessive crawl depth.",
+    "Fault Tolerance & Extensibility: Support worker failover, dynamic checkpointing, and modular parser pipelines for diverse content types."
+  ],
+  "scale_targets": {
+    "pages_crawled_per_month": 10000000000,
+    "continuous_pages_per_second": 3850,
+    "peak_pages_per_second": 10000,
+    "average_page_size_kb": 250,
+    "daily_raw_storage_tb": 83.3,
+    "monthly_raw_storage_pb": 2.5,
+    "five_year_storage_pb": 150,
+    "distinct_domains_tracked": 100000000,
+    "url_frontier_queue_capacity": 50000000000,
+    "dns_cache_hit_ratio_target": 0.98
+  },
+  "key_challenges": [
+    "Politeness vs Priority in URL Frontier: Designing a two-tier queueing architecture (Priority queues for page freshness and PageRank + Politeness queues partitioned by domain hash with delayed dequeueing).",
+    "URL Deduplication at Scale: Managing a set of 50+ billion seen URLs without exploding RAM using Bloom filters backed by distributed key-value stores.",
+    "Content Deduplication (Near-Duplicate Detection): Computing 64-bit SimHash or MinHash fingerprints of parsed HTML content to discard mirror sites and syndicated articles.",
+    "DNS Resolution Bottleneck: Mitigating synchronous DNS lookup latency (which can take 100-500ms) by utilizing an asynchronous local DNS caching cluster with aggressive TTL caching.",
+    "Spider Traps & Deep Crawl Loops: Applying heuristic URL length filters, path segment frequency counters, and graph cycle detection to prevent endless crawls."
+  ],
+  "reference_solution": {
+    "architecture_pattern": "Distributed asynchronous worker pipeline with decoupled two-tier URL Frontier (Priority + Politeness), distributed Bloom filters, and object storage blob sinks",
+    "core_components": [
+      "URL Frontier Service: Two-tier queueing system (F-front queues for priority ranking, B-back queues with delay queues for per-domain politeness)",
+      "DNS Cache Cluster: In-memory distributed DNS resolver fleet caching resolved A/AAAA records with prefetching to avoid WAN DNS roundtrips",
+      "HTML Fetcher Fleet: High-concurrency async network workers fetching pages with connection pooling, robots.txt evaluation, and timeout guards",
+      "Parser & Content Extractor: Streaming HTML parsers extracting text, meta tags, and outgoing URLs while converting relative paths to canonical URLs",
+      "Duplicate Elimination Filter: Bloom filter cluster + SimHash generator verifying URL uniqueness and detecting near-duplicate document bodies",
+      "Document Storage (Object Store): Distributed S3-compatible blob store persisting compressed HTML (WARC/gzip format) partitioned by crawl date and hash",
+      "Metadata & Link Graph Store: Distributed Wide-Column store (Cassandra/Bigtable) recording URL metadata, crawl status, HTTP headers, and hyperlink graph edges"
+    ],
+    "url_frontier_strategy": "Mercator two-tier queue design: Ingress URLs pass through prioritizer into FIFO priority queues (F-queues), then map through domain hash to back queues (B-queues) managed by a politeness delay router ensuring minimum wait intervals per host.",
+    "deduplication_strategy": "Dual-layer deduplication: URL frontier uses scalable partitioned Bloom filter in Redis/memory with false positive rate < 0.01% backed by Cassandra; document content uses 64-bit SimHash with Hamming distance threshold <= 3 to detect duplicate pages."
+  },
+  "tag_slugs": [
+    "distributed-systems",
+    "web-crawler",
+    "high-throughput",
+    "queues-and-messaging",
+    "storage-and-blobs"
+  ]
+}
