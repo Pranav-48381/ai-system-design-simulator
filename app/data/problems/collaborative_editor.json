@@ -1,0 +1,66 @@
+{
+  "slug": "realtime-collaborative-document-editor",
+  "title": "Design a Real-Time Collaborative Document Editor (Google Docs)",
+  "summary": "Design a low-latency, highly available real-time collaborative document editing platform supporting concurrent typing, conflict resolution (OT/CRDT), live cursor presence, and revision history for millions of concurrent documents.",
+  "description": "Design a real-time collaborative rich-text document editing platform similar to Google Docs or Notion. Multiple users can open the same document simultaneously, view each other's live cursor positions and selections, and make concurrent edits with character-level granularity. The system must guarantee strong eventual consistency (all collaborators converge to the exact same document state without losing edits), achieve sub-50ms keystroke propagation latency, support offline edits with automatic reconciliation, and maintain immutable revision histories with snapshot compaction.",
+  "difficulty": "hard",
+  "functional_requirements": [
+    "Real-Time Multi-User Collaborative Editing: Enable multiple users to concurrently insert, delete, and format text in the same document with instant local echo and sub-50ms propagation.",
+    "Conflict Resolution & State Convergence: Resolve concurrent conflicting edits deterministically using Operational Transformation (OT) or Conflict-Free Replicated Data Types (CRDTs) to ensure eventual consistency.",
+    "Live Presence & Ephemeral State: Synchronize real-time collaborator metadata (user avatars, live cursor positions, text selection highlights) without polluting persistent document storage.",
+    "Revision History & Snapshotting: Record an immutable timeline of document edit operations, allowing users to browse change history, view diffs, and restore previous document versions.",
+    "Offline Editing & Resynchronization: Allow users to edit documents while disconnected and seamlessly replay queued operations upon network reconnection without overwriting newer remote changes."
+  ],
+  "non_functional_requirements": [
+    "Consistency & Correctness: Strong eventual consistency; all active clients must converge to identical document states regardless of message arrival ordering.",
+    "Ultra-Low Latency: Keystroke synchronization and broadcast latency must stay under 50ms across geographically distributed collaborators.",
+    "High Availability: 99.99% service availability; session reconnections must be seamless if individual WebSocket servers fail.",
+    "Scalability: Support 50+ concurrent active editors on a single document, and 5 million concurrently active document sessions globally.",
+    "Data Durability: Zero data loss; every acknowledged operational delta must be durably stored in write-ahead logs and periodically compacted."
+  ],
+  "scale_targets": {
+    "daily_active_users": 50000000,
+    "concurrent_active_documents": 5000000,
+    "concurrent_editors_per_document": 50,
+    "peak_operations_per_second": 250000,
+    "average_keystrokes_per_user_per_min": 180,
+    "p99_keystroke_propagation_latency_ms": 40,
+    "snapshot_interval_operations": 500,
+    "average_document_size_kb": 100,
+    "daily_delta_storage_tb": 15
+  },
+  "key_challenges": [
+    "OT vs CRDT Trade-off: Operational Transformation (centralized sequencer managing transforms against server version) vs CRDTs (Logoot/LSEQ/Yjs with decentralized commutative merge but higher memory overhead per character).",
+    "WebSocket Session Affinity & Routing: Routing all collaborators of a given document to the same authoritative document coordinator node using consistent hashing or Redis Pub/Sub backplanes.",
+    "Memory Compaction & Snapshotting: Preventing infinite operation log growth by periodically snapshotting full document states every N operations or M minutes and pruning older delta logs.",
+    "Ephemeral Presence vs Persistent Operations: Decoupling high-frequency cursor/mouse coordinate streams (ephemeral stream) from persistent edit deltas (durable TCP stream).",
+    "Offline Reconnection Thundering Herd: Efficiently reconciling a client reconnecting after hours of offline edits against thousands of server-side intervening operations."
+  ],
+  "reference_solution": {
+    "architecture_pattern": "Centralized Document Session Coordinator cluster with WebSocket gateways, in-memory CRDT/OT engine, Redis Pub/Sub collaboration backplane, and LSM-tree delta log storage",
+    "core_components": [
+      "Edge L7 Load Balancer with WebSocket termination and sticky routing",
+      "Document Gateway Fleet: Stateless WebSocket gateway servers maintaining active duplex connections with clients",
+      "Document Coordinator Service: Authoritative stateful session manager (one active leader node per open document via consistent hash ring or lease coordinator)",
+      "Redis Pub/Sub & Presence Cluster: Ephemeral broker distributing collaborator cursor coordinates and presence pings",
+      "Operation Log Store (WAL): Append-only distributed log (Kafka or Cassandra) persisting every committed document operation",
+      "Document Snapshot Service: Asynchronous background compaction worker saving full document JSON/binary snapshots to S3",
+      "Metadata & Permissions DB: PostgreSQL database managing document ownership, ACLs, sharing links, and folder hierarchy"
+    ],
+    "concurrency_control_strategy": "Server-arbitrated Operational Transformation (OT) or Yjs/CRDT state vector exchange: The Document Coordinator assigns a monotonically increasing server sequence number to each incoming delta, transforms it against any intervening unacknowledged client operations, broadcasts the canonical delta to peers, and appends it to the durable WAL.",
+    "storage_schema": {
+      "tables": [
+        "documents (id UUID, title VARCHAR, owner_id UUID, current_version INT, created_at TIMESTAMP)",
+        "document_operations (document_id UUID, version INT, client_id VARCHAR, operation_type VARCHAR, position INT, content TEXT, created_at TIMESTAMP)",
+        "document_snapshots (document_id UUID, version INT, snapshot_payload JSONB, created_at TIMESTAMP)"
+      ]
+    }
+  },
+  "tag_slugs": [
+    "real-time-systems",
+    "collaborative-editing",
+    "websockets",
+    "crdt-and-ot",
+    "distributed-consensus"
+  ]
+}
