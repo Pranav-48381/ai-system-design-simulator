@@ -8,7 +8,25 @@ from collections.abc import Sequence
 import time
 from typing import Any
 
-from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, SystemMessage
+try:
+    from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, SystemMessage
+except ImportError:  # pragma: no cover
+    class BaseMessage:  # type: ignore[no-redef]
+        """Fallback base message container when langchain_core is not installed."""
+
+        def __init__(self, content: str = "", additional_kwargs: dict[str, Any] | None = None) -> None:
+            self.content = content
+            self.additional_kwargs = additional_kwargs or {}
+
+    class HumanMessage(BaseMessage):  # type: ignore[no-redef]
+        pass
+
+    class AIMessage(BaseMessage):  # type: ignore[no-redef]
+        pass
+
+    class SystemMessage(BaseMessage):  # type: ignore[no-redef]
+        pass
+
 
 from app.core.constants import InterviewStage
 from app.graph.stages import (
