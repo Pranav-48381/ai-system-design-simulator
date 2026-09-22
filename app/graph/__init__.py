@@ -39,6 +39,12 @@ _EXPORTS: dict[str, str] = {
     # Config & Types (Task 100, Task 101)
     "GraphConfig": "app.graph.config",
     "CandidateAction": "app.graph.types",
+    # State History & Traversal (Task 103)
+    "StateHistoryReconstructor": "app.graph.state_history",
+    "SessionTimeline": "app.graph.state_history",
+    "StageHistoryRecord": "app.graph.state_history",
+    "build_linear_execution_path": "app.graph.state_history",
+    "reconstruct_stage_history": "app.graph.state_history",
     # Builder (Task 139)
     "build_interview_graph": "app.graph.builder",
     "compile_interview_graph": "app.graph.builder",
@@ -90,6 +96,12 @@ __all__ = [
     # Config & Types
     "GraphConfig",
     "CandidateAction",
+    # State History & Traversal
+    "StateHistoryReconstructor",
+    "SessionTimeline",
+    "StageHistoryRecord",
+    "build_linear_execution_path",
+    "reconstruct_stage_history",
     # Graph Construction
     "build_interview_graph",
     "compile_interview_graph",
