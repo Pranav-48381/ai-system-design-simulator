@@ -45,6 +45,12 @@ _EXPORTS: dict[str, str] = {
     "StageHistoryRecord": "app.graph.state_history",
     "build_linear_execution_path": "app.graph.state_history",
     "reconstruct_stage_history": "app.graph.state_history",
+    # Metrics & Telemetry (Task 104)
+    "GraphMetricsCollector": "app.graph.metrics",
+    "NodeExecutionMetric": "app.graph.metrics",
+    "StageMetricsSummary": "app.graph.metrics",
+    "SessionMetricsSummary": "app.graph.metrics",
+    "measure_node_execution": "app.graph.metrics",
     # Builder (Task 139)
     "build_interview_graph": "app.graph.builder",
     "compile_interview_graph": "app.graph.builder",
@@ -102,6 +108,12 @@ __all__ = [
     "StageHistoryRecord",
     "build_linear_execution_path",
     "reconstruct_stage_history",
+    # Metrics & Telemetry
+    "GraphMetricsCollector",
+    "NodeExecutionMetric",
+    "StageMetricsSummary",
+    "SessionMetricsSummary",
+    "measure_node_execution",
     # Graph Construction
     "build_interview_graph",
     "compile_interview_graph",
