@@ -51,6 +51,12 @@ _EXPORTS: dict[str, str] = {
     "StageMetricsSummary": "app.graph.metrics",
     "SessionMetricsSummary": "app.graph.metrics",
     "measure_node_execution": "app.graph.metrics",
+    # Runner Registry & Model Switching (Task 105)
+    "GraphRunnerRegistry": "app.graph.registry",
+    "get_graph_registry": "app.graph.registry",
+    "ModelTier": "app.graph.registry",
+    "ModelProvider": "app.graph.registry",
+    "ModelProfile": "app.graph.registry",
     # Builder (Task 139)
     "build_interview_graph": "app.graph.builder",
     "compile_interview_graph": "app.graph.builder",
@@ -114,6 +120,12 @@ __all__ = [
     "StageMetricsSummary",
     "SessionMetricsSummary",
     "measure_node_execution",
+    # Runner Registry & Model Switching
+    "GraphRunnerRegistry",
+    "get_graph_registry",
+    "ModelTier",
+    "ModelProvider",
+    "ModelProfile",
     # Graph Construction
     "build_interview_graph",
     "compile_interview_graph",
