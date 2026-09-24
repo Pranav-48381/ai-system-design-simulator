@@ -29,6 +29,8 @@ _EXPORTS: dict[str, str] = {
     "get_architecture_prompt": "app.prompts.architecture",
     "get_deep_dive_prompt": "app.prompts.deep_dive",
     "get_bottleneck_prompt": "app.prompts.bottleneck",
+    "get_router_intent_prompt": "app.prompts.router",
+    "get_stage_readiness_prompt": "app.prompts.router",
     "get_evaluation_prompt": "app.prompts.evaluation",
     # Hints & Rubrics (Tasks 115 - 116)
     "get_hint_prompt": "app.prompts.hints",
@@ -65,12 +67,14 @@ __all__ = [
     "RIGOROUS_PRINCIPAL_PERSONA",
     "SOCRATIC_ARCHITECT_PERSONA",
     "CHALLENGING_SPECIALIST_PERSONA",
-    # Stage Prompts
+    # Stage & Router Prompts
     "get_clarification_prompt",
     "get_estimation_prompt",
     "get_architecture_prompt",
     "get_deep_dive_prompt",
     "get_bottleneck_prompt",
+    "get_router_intent_prompt",
+    "get_stage_readiness_prompt",
     "get_evaluation_prompt",
     # Hints & Rubrics
     "get_hint_prompt",
