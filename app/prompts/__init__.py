@@ -44,6 +44,9 @@ _EXPORTS: dict[str, str] = {
     "get_diagram_parser_prompt": "app.prompts.diagram_parser",
     "get_diagram_validation_prompt": "app.prompts.diagram_parser",
     "get_ascii_to_mermaid_prompt": "app.prompts.diagram_parser",
+    # Capacity Math Verification (Task 119)
+    "get_math_verification_prompt": "app.prompts.math_verifier",
+    "get_formula_explanation_prompt": "app.prompts.math_verifier",
 }
 
 
@@ -97,4 +100,7 @@ __all__ = [
     "get_diagram_parser_prompt",
     "get_diagram_validation_prompt",
     "get_ascii_to_mermaid_prompt",
+    # Capacity Math Verification
+    "get_math_verification_prompt",
+    "get_formula_explanation_prompt",
 ]
