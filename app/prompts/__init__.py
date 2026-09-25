@@ -47,6 +47,10 @@ _EXPORTS: dict[str, str] = {
     # Capacity Math Verification (Task 119)
     "get_math_verification_prompt": "app.prompts.math_verifier",
     "get_formula_explanation_prompt": "app.prompts.math_verifier",
+    # Anti-Hallucination & Grounding Guards (Task 120)
+    "get_anti_hallucination_guard_prompt": "app.prompts.anti_hallucination",
+    "get_grounding_verification_prompt": "app.prompts.anti_hallucination",
+    "PHYSICAL_SYSTEMS_INVARIANTS": "app.prompts.anti_hallucination",
 }
 
 
@@ -103,4 +107,8 @@ __all__ = [
     # Capacity Math Verification
     "get_math_verification_prompt",
     "get_formula_explanation_prompt",
+    # Anti-Hallucination & Grounding Guards
+    "get_anti_hallucination_guard_prompt",
+    "get_grounding_verification_prompt",
+    "PHYSICAL_SYSTEMS_INVARIANTS",
 ]
