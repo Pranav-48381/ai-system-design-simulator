@@ -40,6 +40,10 @@ _EXPORTS: dict[str, str] = {
     "get_improvement_tips_prompt": "app.prompts.final_summary",
     "get_hint_prompt": "app.prompts.hint_generator",
     "get_progressive_hint_prompt": "app.prompts.hint_generator",
+    # Diagram Parsing & Validation (Task 118)
+    "get_diagram_parser_prompt": "app.prompts.diagram_parser",
+    "get_diagram_validation_prompt": "app.prompts.diagram_parser",
+    "get_ascii_to_mermaid_prompt": "app.prompts.diagram_parser",
 }
 
 
@@ -89,4 +93,8 @@ __all__ = [
     "get_final_summary_prompt",
     "get_executive_summary_prompt",
     "get_improvement_tips_prompt",
+    # Diagram Parsing & Validation
+    "get_diagram_parser_prompt",
+    "get_diagram_validation_prompt",
+    "get_ascii_to_mermaid_prompt",
 ]
