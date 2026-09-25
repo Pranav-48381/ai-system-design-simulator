@@ -32,9 +32,10 @@ _EXPORTS: dict[str, str] = {
     "get_router_intent_prompt": "app.prompts.router",
     "get_stage_readiness_prompt": "app.prompts.router",
     "get_evaluation_prompt": "app.prompts.evaluation",
-    # Hints & Rubrics (Tasks 115 - 116)
-    "get_hint_prompt": "app.prompts.hints",
-    "get_rubric_evaluation_prompt": "app.prompts.rubrics",
+    # Hints & Rubrics (Tasks 115 - 117)
+    "get_rubric_evaluation_prompt": "app.prompts.rubric_eval",
+    "get_single_pillar_evaluation_prompt": "app.prompts.rubric_eval",
+    "get_hint_prompt": "app.prompts.hint_generator",
 }
 
 
@@ -79,4 +80,5 @@ __all__ = [
     # Hints & Rubrics
     "get_hint_prompt",
     "get_rubric_evaluation_prompt",
+    "get_single_pillar_evaluation_prompt",
 ]
