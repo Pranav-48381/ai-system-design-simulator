@@ -39,6 +39,7 @@ _EXPORTS: dict[str, str] = {
     "get_executive_summary_prompt": "app.prompts.final_summary",
     "get_improvement_tips_prompt": "app.prompts.final_summary",
     "get_hint_prompt": "app.prompts.hint_generator",
+    "get_progressive_hint_prompt": "app.prompts.hint_generator",
 }
 
 
@@ -82,6 +83,7 @@ __all__ = [
     "get_evaluation_prompt",
     # Hints, Rubrics & Summaries
     "get_hint_prompt",
+    "get_progressive_hint_prompt",
     "get_rubric_evaluation_prompt",
     "get_single_pillar_evaluation_prompt",
     "get_final_summary_prompt",
