@@ -221,6 +221,7 @@ class StageEvaluatorNodeOutput(TypedDict, total=False):
 
 class EvaluationNodeOutput(TypedDict, total=False):
     """Output shape returned by final_evaluator_node."""
+    messages: list[Any]
     evaluations: dict[str, Any]
     feedback_items: list[dict[str, Any]]
     overall_score: float
