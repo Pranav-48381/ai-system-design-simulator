@@ -202,7 +202,8 @@ class HintNodeOutput(TypedDict, total=False):
     messages: list[Any]
     stage_turn_count: int
     total_turn_count: int
-    hints_used: int
+    hint_count: int
+    hints_used: list[dict[str, Any]]
     next_node: str | None
 
 
