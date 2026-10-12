@@ -189,6 +189,34 @@ class BottleneckNodeOutput(TypedDict, total=False):
     next_node: str | None
 
 
+class InterviewerNodeOutput(TypedDict, total=False):
+    """Output shape returned by interviewer_node."""
+    messages: list[Any]
+    stage_turn_count: int
+    total_turn_count: int
+    next_node: str | None
+
+
+class HintNodeOutput(TypedDict, total=False):
+    """Output shape returned by hint_node."""
+    messages: list[Any]
+    stage_turn_count: int
+    total_turn_count: int
+    hints_used: int
+    next_node: str | None
+
+
+class StageEvaluatorNodeOutput(TypedDict, total=False):
+    """Output shape returned by stage_evaluator_node."""
+    messages: list[Any]
+    current_stage: str
+    stage_turn_count: int
+    total_turn_count: int
+    stage_summary_notes: dict[str, str]
+    is_stage_complete: bool
+    next_node: str | None
+
+
 class EvaluationNodeOutput(TypedDict, total=False):
     """Output shape returned by final_evaluator_node."""
     evaluations: dict[str, Any]
