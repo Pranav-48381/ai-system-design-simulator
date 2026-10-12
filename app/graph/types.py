@@ -229,3 +229,10 @@ class EvaluationNodeOutput(TypedDict, total=False):
     is_stage_complete: bool
     is_interview_complete: bool
     next_node: str | None
+
+
+class ReportNodeOutput(TypedDict, total=False):
+    """Output shape returned by report_node."""
+    messages: list[Any]
+    evaluations: dict[str, Any]
+    next_node: str | None
