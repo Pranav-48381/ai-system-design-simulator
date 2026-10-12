@@ -211,6 +211,7 @@ class StageEvaluatorNodeOutput(TypedDict, total=False):
     """Output shape returned by stage_evaluator_node."""
     messages: list[Any]
     current_stage: str
+    completed_stages: list[str]
     stage_turn_count: int
     total_turn_count: int
     stage_summary_notes: dict[str, str]
